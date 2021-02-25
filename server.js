@@ -89,7 +89,7 @@ app.post('/webhook', async (req, res) => {
     res.json(newNest)
     // Invoke iterate and send function
     return sendEventsToAll(newNest);
-  }else{
+  } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
   }
@@ -99,21 +99,44 @@ app.post('/webhook', async (req, res) => {
 app.post('/sentevents', async (req, res) => {
   const { body } = req;
   // if (body.object === 'page') {
-    const newNest = body;
-    await handleEvents(newNest)
-    nests.push(newNest);
-    // Send recently added nest as POST result
-    res.json(newNest)
-    // Invoke iterate and send function
-    return sendEventsToAll(newNest);
+  const newNest = body;
+  await handleEvents(newNest)
+  nests.push(newNest);
+  // Send recently added nest as POST result
+  res.json(newNest)
+  // Invoke iterate and send function
+  return sendEventsToAll(newNest);
   // }else{
-    // res.sendStatus(404);
+  // res.sendStatus(404);
   // }
 
 })
 
+// app.get('/getprofile', async (req, res) => {
+//   await handleEventsPro()
+// })
+
 const PAGE_ACCESS_TOKEN = "EAAeZB9mdZANSQBAHVGfIwZCtFCgbP59HkZC9duHw1IdCfh1mbKjvZBzWZBDx3gk948hamrDmZBU9atUpbladqgfKPN86OcMFmQC1TLPoyFCxKmW7mSH3WS4vkKVl8d4Wo0qCIEA7OJWK3ojZCM59iEb2DPMjyDhDWDtiSybZBT8NS9N1fkmnAiwaB"
 
+// const handleEventsPro = (requestBody) => {
+
+//   const config = {
+//     method: 'get',
+//     uri: "https://business.facebook.com/api/graphqlbatch/",
+//     json: requestBody,
+//     qs: {
+//       access_token: `${PAGE_ACCESS_TOKEN}`,
+//     },
+//   };
+//   return request(config, (err, res, body) => {
+//     if (!body.error) {
+//       console.log('message sent!', body)
+//       return body
+//     } else {
+//       return new Error("Unable to send message:" + body.error);
+//     }
+//   });
+// }
 const handleEvents = (requestBody) => {
   // const text = get(events, ['messaging', 0, 'message', 'text']);
   // const sender = get(events, ['messaging', 0, 'sender', 'id']);
@@ -127,15 +150,18 @@ const handleEvents = (requestBody) => {
 
 
 
+
+
   const config = {
     method: 'post',
     uri: "https://graph.facebook.com/v6.0/me/messages",
+    // uri:"https://graph.facebook.com/<PSID>?fields=first_name,last_name,profile_pic&access_token=<PAGE_ACCESS_TOKEN>",
     json: requestBody,
     qs: {
       access_token: `${PAGE_ACCESS_TOKEN}`,
     },
   };
-  return request(config, (err, res, body) => {
+  return request(config, configP, (err, res, body) => {
     if (!body.error) {
       console.log('message sent!', body)
       return body
