@@ -116,7 +116,7 @@ app.get('/getprofile', async (req, resp) => {
 
   const config = {
     method: 'get',
-    uri: "https://graph.facebook.com/v9.0/me/conversations?fields=snippet,updated_tim,senders",
+    uri: "https://graph.facebook.com/v9.0/me/conversations?fields=snippet,updated_time,senders",
     qs: {
       access_token: `${PAGE_ACCESS_TOKEN}`,
     },
@@ -129,24 +129,7 @@ app.get('/getprofile', async (req, resp) => {
 
 const PAGE_ACCESS_TOKEN = "EAAGPEhNTtcIBAHqHM1kpwB4P1dSWZAVOkZA85ba2WU3LYnnDSooyNUI3vsQZB01yUkyLrfx8rHZApeJpbk9C4ZBF3xIhZAl7ZAtcEMxsJdkT3mIK0Q8a3aqr4FIGosDujU4Kf6L1XU1UEPjc4Wkd0NngNaXgMBaav2Tn2GQ5b97EwZDZD"
 
-const handleEventsPro = () => {
 
-  const config = {
-    method: 'get',
-    uri: "https://graph.facebook.com/v10.0/me/conversations?fields=snippet,senders,messages{message,from,created_time}",
-    qs: {
-      access_token: `${PAGE_ACCESS_TOKEN}`,
-    },
-  };
-  return request(config, (err, res, body) => {
-    const data = JSON.parse(body)
-    console.log(data)
-    return data;
-  });
-
-  // .then(data => {
-
-}
 const handleEvents = (requestBody) => {
 
   const config = {
