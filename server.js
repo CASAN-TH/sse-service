@@ -84,11 +84,20 @@ app.post('/webhook', async (req, res) => {
     const events = body && body.entry && body.entry[0]
     const newNest = events;
     // await handleEvents(newNest)
-    nests.push(newNest);
+    console.log(newNest.messaging);
+    let response = {
+      message_type: "contact",
+      from: {
+        email: newNest.messaging[0].sender.id + "@facebook.com",
+        id: newNest.messaging[0].sender.id,
+      },
+      message: newNest.messaging[0].message.text
+    }
+    nests.push(response);
     // Send recently added nest as POST result
-    res.json(newNest)
+    res.json(response)
     // Invoke iterate and send function
-    return sendEventsToAll(newNest);
+    return sendEventsToAll(response);
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
@@ -135,7 +144,7 @@ app.get('/getprofile', async (req, resp) => {
   });
 })
 
-const PAGE_ACCESS_TOKEN = "EAAEAfvrHBV4BAJCbW6JEBAjZA9guZAdZCRZAXp1An4EQI9xid4s8Q9rKFzEa6s2dN1DrKc2fH0IF8rT9rjcH0lvV9ZA1U7rf3l8Htg3egP5VwAIspmIZCwCHoZCVmQ6dix3tI1KVJ4dKyc0GMeOJTUYRnQnnJlksu5f6aUgH1ISKnWMU3rXvZCTW"
+const PAGE_ACCESS_TOKEN = "EAADQisBpkbYBAAL4YO8xTLGKS3B1F7trq7JLqXXyXGeAO4rodlAEClv6isG2Vw7a37faWR9niBHJZCegZAGf99ENpqBLFFD5fNsGSXhWPHxhWFpQXAPI7poEGcnTboq44RU0WJNTcUzEbZADuGWODGgt2I4YiBvZBmXDYfeZBnUw8gywELIQx"
 
 
 const handleEvents = (requestBody) => {
