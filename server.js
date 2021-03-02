@@ -116,7 +116,7 @@ app.get('/getprofile', async (req, resp) => {
 
   const config = {
     method: 'get',
-    uri: "https://graph.facebook.com/v10.0/me/conversations?fields=snippet,senders,messages{message,from,created_time}",
+    uri: "https://graph.facebook.com/v9.0/me/conversations?fields=snippet,updated_tim,senders",
     qs: {
       access_token: `${PAGE_ACCESS_TOKEN}`,
     },
@@ -142,12 +142,6 @@ const handleEventsPro = () => {
     const data = JSON.parse(body)
     console.log(data)
     return data;
-    // if (!body.error) {
-    //   console.log('message sent!', body)
-    //   return body
-    // } else {
-    //   return new Error("Unable to send message:" + body.error);
-    // }
   });
 
   // .then(data => {
@@ -159,7 +153,6 @@ const handleEvents = (requestBody) => {
   const config = {
     method: 'post',
     uri: "https://graph.facebook.com/v6.0/me/messages",
-    // uri:"https://graph.facebook.com/<PSID>?fields=first_name,last_name,profile_pic&access_token=<PAGE_ACCESS_TOKEN>",
     json: requestBody,
     qs: {
       access_token: `${PAGE_ACCESS_TOKEN}`,
