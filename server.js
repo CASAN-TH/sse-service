@@ -58,7 +58,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.post('/nest', addNest);
 app.get('/events', eventsHandler);
 app.get('/status', (req, res) => res.json({ clients: clients.length }));
-const PORT = 3000;
+const PORT = 3001;
 let clients = [];
 let nests = [];
 
@@ -112,45 +112,48 @@ app.post('/sentevents', async (req, res) => {
 
 })
 
-// app.get('/getprofile', async (req, res) => {
-//   await handleEventsPro()
-// })
+app.get('/getprofile', async (req, resp) => {
+
+  const config = {
+    method: 'get',
+    uri: "https://graph.facebook.com/v10.0/me/conversations?fields=snippet,senders,messages{message,from,created_time}",
+    qs: {
+      access_token: `${PAGE_ACCESS_TOKEN}`,
+    },
+  };
+  request(config, (err, res, body) => {
+    const data = JSON.parse(body)
+    resp.jsonp(data)
+  });
+})
 
 const PAGE_ACCESS_TOKEN = "EAAeZB9mdZANSQBAHVGfIwZCtFCgbP59HkZC9duHw1IdCfh1mbKjvZBzWZBDx3gk948hamrDmZBU9atUpbladqgfKPN86OcMFmQC1TLPoyFCxKmW7mSH3WS4vkKVl8d4Wo0qCIEA7OJWK3ojZCM59iEb2DPMjyDhDWDtiSybZBT8NS9N1fkmnAiwaB"
 
-// const handleEventsPro = (requestBody) => {
+const handleEventsPro = () => {
 
-//   const config = {
-//     method: 'get',
-//     uri: "https://business.facebook.com/api/graphqlbatch/",
-//     json: requestBody,
-//     qs: {
-//       access_token: `${PAGE_ACCESS_TOKEN}`,
-//     },
-//   };
-//   return request(config, (err, res, body) => {
-//     if (!body.error) {
-//       console.log('message sent!', body)
-//       return body
-//     } else {
-//       return new Error("Unable to send message:" + body.error);
-//     }
-//   });
-// }
+  const config = {
+    method: 'get',
+    uri: "https://graph.facebook.com/v10.0/me/conversations?fields=snippet,senders,messages{message,from,created_time}",
+    qs: {
+      access_token: `${PAGE_ACCESS_TOKEN}`,
+    },
+  };
+  return request(config, (err, res, body) => {
+    const data = JSON.parse(body)
+    console.log(data)
+    return data;
+    // if (!body.error) {
+    //   console.log('message sent!', body)
+    //   return body
+    // } else {
+    //   return new Error("Unable to send message:" + body.error);
+    // }
+  });
+
+  // .then(data => {
+
+}
 const handleEvents = (requestBody) => {
-  // const text = get(events, ['messaging', 0, 'message', 'text']);
-  // const sender = get(events, ['messaging', 0, 'sender', 'id']);
-  // const requestBody = {
-  //   "messaging_type": "RESPONSE",
-  //   "recipient": {
-  //     id: sender
-  //   },
-  //   "message": { text }
-  // }
-
-
-
-
 
   const config = {
     method: 'post',
@@ -161,7 +164,7 @@ const handleEvents = (requestBody) => {
       access_token: `${PAGE_ACCESS_TOKEN}`,
     },
   };
-  return request(config, configP, (err, res, body) => {
+  return request(config, (err, res, body) => {
     if (!body.error) {
       console.log('message sent!', body)
       return body
