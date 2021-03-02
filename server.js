@@ -101,11 +101,19 @@ app.post('/sentevents', async (req, res) => {
   // if (body.object === 'page') {
   const newNest = body;
   await handleEvents(newNest)
-  nests.push(newNest);
+  let response = {
+    from: {
+      email: newNest.recipient.id + "@facebook.com",
+      id: newNest.recipient.id,
+    },
+    message: newNest.message.text
+  }
+  // console.log(response);
+  // nests.push(newNest);
   // Send recently added nest as POST result
-  res.json(newNest)
+  res.json(response)
   // Invoke iterate and send function
-  return sendEventsToAll(newNest);
+  return sendEventsToAll(response);
   // }else{
   // res.sendStatus(404);
   // }
@@ -127,7 +135,7 @@ app.get('/getprofile', async (req, resp) => {
   });
 })
 
-const PAGE_ACCESS_TOKEN = "EAAGPEhNTtcIBAHqHM1kpwB4P1dSWZAVOkZA85ba2WU3LYnnDSooyNUI3vsQZB01yUkyLrfx8rHZApeJpbk9C4ZBF3xIhZAl7ZAtcEMxsJdkT3mIK0Q8a3aqr4FIGosDujU4Kf6L1XU1UEPjc4Wkd0NngNaXgMBaav2Tn2GQ5b97EwZDZD"
+const PAGE_ACCESS_TOKEN = "EAAEAfvrHBV4BAJCbW6JEBAjZA9guZAdZCRZAXp1An4EQI9xid4s8Q9rKFzEa6s2dN1DrKc2fH0IF8rT9rjcH0lvV9ZA1U7rf3l8Htg3egP5VwAIspmIZCwCHoZCVmQ6dix3tI1KVJ4dKyc0GMeOJTUYRnQnnJlksu5f6aUgH1ISKnWMU3rXvZCTW"
 
 
 const handleEvents = (requestBody) => {
