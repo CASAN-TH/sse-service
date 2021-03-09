@@ -169,76 +169,76 @@ const handleEvents = (requestBody) => {
 
 app.post('/lineOAList', async (req, resp) => {
   const config = {
-      method: 'get',
-      uri: "https://chat.line.biz/api/v1/bots?noFilter=true&limit=1000",
-      headers: {
-          Cookie: req.body.cookie_token
-      }
+    method: 'get',
+    uri: "https://chat.line.biz/api/v1/bots?noFilter=true&limit=1000",
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF- TOKEN=' + req.body.xsrftoken
+    }
   };
   request(config, (err, res, body) => {
-      if (!body.error) {
-          let messages = (JSON.parse(body));
-          resp.jsonp(messages);
-      } else {
-          return new Error("Unable to send message:" + body.error);
-      }
+    if (!body.error) {
+      let messages = (JSON.parse(body));
+      resp.jsonp(messages);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
   });
 })
 
 app.post('/lineContactList', async (req, resp) => {
   const config = {
-      method: 'get',
-      uri: "https://chat.line.biz/api/v1/bots/" + req.body.LineOAID + "/chats?folderType=ALL&taglds=&limit=25",
-      headers: {
-          Cookie: req.body.cookie_token
-      }
+    method: 'get',
+    uri: "https://chat.line.biz/api/v1/bots/" + req.body.lineOAID + "/chats?folderType=ALL&taglds=&limit=25",
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF- TOKEN=' + req.body.xsrftoken
+    }
 
   };
   request(config, (err, res, body) => {
-      if (!body.error) {
-          let messages = (JSON.parse(body));
-          resp.jsonp(messages);
-      } else {
-          return new Error("Unable to send message:" + body.error);
-      }
+    if (!body.error) {
+      let messages = (JSON.parse(body));
+      resp.jsonp(messages);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
   });
 })
 
 app.post('/lineContactChat', async (req, resp) => {
   const config = {
-      method: 'get',
-      uri: "https://chat.line.biz/api/v1/bots/" + req.body.LineOAID + "/messages/" + req.body.chatID,
-      headers: {
-          Cookie: req.body.cookie_token
-      }
+    method: 'get',
+    uri: "https://chat.line.biz/api/v1/bots/" + req.body.lineOAID + "/messages/" + req.body.chatID,
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF- TOKEN=' + req.body.xsrftoken
+    }
 
   };
   request(config, (err, res, body) => {
-      if (!body.error) {
-          let messages = (JSON.parse(body));
-          resp.jsonp(messages);
-      } else {
-          return new Error("Unable to send message:" + body.error);
-      }
+    if (!body.error) {
+      let messages = (JSON.parse(body));
+      resp.jsonp(messages);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
   });
 })
 
 app.post('/linestreamingApiToken', async (req, resp) => {
   const config = {
-      method: 'post',
-      uri: req.body.url,
-      headers: {
-          Cookie: req.body.Cookie,
-          'X-XSRF-TOKEN': req.body.XSRFTOKEN
-      }
+    method: 'post',
+    uri: 'https://chat.line.biz/api/v1/bots/' + req.body.lineOAID + '/streamingApiToken?',
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.xsrftoken,
+      'X-XSRF-TOKEN': req.body.xsrftoken
+    }
   };
   request(config, (err, res, body) => {
-      if (!body.error) {
-          let messages = (JSON.parse(body));
-          resp.jsonp(messages);
-      } else {
-          return new Error("Unable to send message:" + body.error);
-      }
+    if (!body.error) {
+      let messages = (JSON.parse(body));
+      resp.jsonp(messages);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
   });
 })
 
