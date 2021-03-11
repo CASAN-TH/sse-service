@@ -242,6 +242,27 @@ app.post('/linestreamingApiToken', async (req, resp) => {
   });
 })
 
+app.post('/lineSendMessage', async (req, resp) => {
+  const config = {
+    method: 'post',
+    uri: 'https://chat.line.biz/api/v1/bots/' + req.body.token.lineOAID + '/messages/' + req.body.token.chatID + '/send',
+    json: req.body.message,
+    headers: {
+      Cookie: 'ses=' + req.body.token.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.token.xsrftoken,
+      'X-XSRF-TOKEN': req.body.token.xsrftoken
+    }
+  };
+  request(config, (err, res, body) => {
+    if (!body.error) {
+      resp.jsonp({
+        status: 200
+      });
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+})
+
 app.listen(PORT, (req, res) => {
   console.log("  Server ready ~~~~")
 })
