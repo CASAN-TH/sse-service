@@ -211,11 +211,27 @@ app.post('/lineContactChat', async (req, resp) => {
     headers: {
       Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF- TOKEN=' + req.body.xsrftoken
     }
-
   };
+
   request(config, (err, res, body) => {
     if (!body.error) {
       let messages = (JSON.parse(body));
+      let length = 0;
+      messages.list.every(e => {
+        if (e.type === 'chatRead') {
+          return true;
+        }
+        length++;
+      })
+      let lengthMessage = 0;
+      messages.list.forEach(message => {
+        if (message.type === 'messageSent' && lengthMessage >= length) {
+          message.statusRead = true;
+        } else if (message.type === 'messageSent' && lengthMessage < length) {
+          message.statusRead = false;
+        }
+        lengthMessage++;
+      })
       resp.jsonp(messages);
     } else {
       return new Error("Unable to send message:" + body.error);
