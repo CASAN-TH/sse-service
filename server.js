@@ -130,7 +130,6 @@ app.post('/sentevents', async (req, res) => {
 })
 
 app.get('/getprofile', async (req, resp) => {
-
   const config = {
     method: 'get',
     uri: "https://graph.facebook.com/v9.0/me/conversations?fields=snippet,updated_time,senders",
@@ -279,7 +278,41 @@ app.post('/lineSendMessage', async (req, resp) => {
   });
 })
 
+app.post('/lineEditNickname', async (req, resp) => {
+  const config = {
+    method: 'put',
+    uri: 'https://chat.line.biz/api/v1/bots/' + req.body.lineOAID + '/users/' + req.body.chatID + '/nickname',
+    json: req.body.json,
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.xsrftoken,
+      'X-XSRF-TOKEN': req.body.xsrftoken
+    }
+  };
+  request(config, (err, res, body) => {
+    if (!body.error) {
+      const config = {
+        method: 'get',
+        uri: 'https://chat.line.biz/api/v1/bots/' + req.body.lineOAID + '/users?userIds=' + req.body.chatID,
+        headers: {
+          Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.xsrftoken,
+          'X-XSRF-TOKEN': req.body.xsrftoken
+        }
+      };
+      request(config, (err, res, body) => {
+        if (!body.error) {
+          let data = JSON.parse(body);
+          resp.jsonp(data);
+        } else {
+          return new Error("Unable to send message:" + body.error);
+        }
+      });
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+})
+
 app.listen(PORT, (req, res) => {
-  console.log("  Server ready ~~~~")
+  console.log("Server ready ~~~~")
 })
 
