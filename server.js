@@ -216,11 +216,13 @@ app.post('/lineContactChat', async (req, resp) => {
     if (!body.error) {
       let messages = (JSON.parse(body));
       let length = 0;
+
       messages.list.every(e => {
         if (e.type === 'chatRead') {
-          return true;
+          return false;
         }
         length++;
+        return true;
       })
       let lengthMessage = 0;
       messages.list.forEach(message => {
