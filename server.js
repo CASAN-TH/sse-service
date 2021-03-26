@@ -314,6 +314,25 @@ app.post('/lineEditNickname', async (req, resp) => {
   });
 })
 
+app.post('/lineSearchContact', async (req, resp) => {
+  const config = {
+    method: 'get',
+    uri: 'https://chat.line.biz/api/v1/bots/' + req.body.token.lineOAID + '/chats/search?query=' + req.body.search + '&searchTargetType=CHAT_PROFILE&limit=25',
+    headers: {
+      Cookie: 'ses=' + req.body.token.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.token.xsrftoken,
+      'X-XSRF-TOKEN': req.body.token.xsrftoken
+    }
+  };
+  request(config, (err, res, body) => {
+    if (!body.error) {
+      let contact = JSON.parse(body);
+      resp.jsonp(contact.list);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+})
+
 app.listen(PORT, (req, res) => {
   console.log("Server ready ~~~~")
 })
