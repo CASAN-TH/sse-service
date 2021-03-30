@@ -346,19 +346,6 @@ app.post('/lineUploadFile', upload.single('file'), (req, resp) => {
     file: fs.createReadStream(req.file.path),
     sendId: body.sendId
   }
-  // console.log(req.file);
-  // var formData = JSON.stringify(data);
-  // console.log(req.file);
-  // restler.post('https://chat.line.biz/api/v1/bots/' + body.token.lineOAID + '/messages/' + body.token.chatID + '/sendFile', {
-  //   multipart: true,
-  //   data: {
-  //     'sendId': body.sendId,
-  //     'file': restler.file
-  //   }
-  // }).on('complete', function (data) {
-  //   console.log(data);
-  // });
-  
   const config = {
     method: 'post',
     uri: 'https://chat.line.biz/api/v1/bots/' + body.token.lineOAID + '/messages/' + body.token.chatID + '/sendFile',
