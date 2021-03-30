@@ -1,14 +1,29 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const app = express()
-const request = require('request')
-
-const VERIFY_TOKEN = 'chatbot001'
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+const request = require('request');
+const multer = require('multer');
+const VERIFY_TOKEN = 'chatbot001';
+const fs = require('fs');
 
 // Allows us to process the data
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+app.use(express.static(__dirname));
+
+const folderName = "upload";
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './' + folderName);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 function eventsHandler(req, res, next) {
   // Mandatory headers and http status to keep connection open
@@ -41,15 +56,7 @@ function eventsHandler(req, res, next) {
 function sendEventsToAll(newNest) {
   clients.forEach(c => c.res.write(`data: ${JSON.stringify(newNest)}\n\n`))
 }
-// Middleware for POST /nest endpoint
-// async function addNest(req, res, next) {
-//   const newNest = req.body;
-//   nests.push(newNest);
-//   // Send recently added nest as POST result
-//   res.json(newNest)
-//   // Invoke iterate and send function
-//   return sendEventsToAll(newNest);
-// }
+
 // Set cors and bodyParser middlewares
 app.use(cors());
 app.use(bodyParser.json());
@@ -327,6 +334,46 @@ app.post('/lineSearchContact', async (req, resp) => {
     if (!body.error) {
       let contact = JSON.parse(body);
       resp.jsonp(contact.list);
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+})
+
+app.post('/lineUploadFile', upload.single('file'), (req, resp) => {
+  let body = JSON.parse(req.body.body);
+  let data = {
+    file: fs.createReadStream(req.file.path),
+    sendId: body.sendId
+  }
+  // console.log(req.file);
+  // var formData = JSON.stringify(data);
+  // console.log(req.file);
+  // restler.post('https://chat.line.biz/api/v1/bots/' + body.token.lineOAID + '/messages/' + body.token.chatID + '/sendFile', {
+  //   multipart: true,
+  //   data: {
+  //     'sendId': body.sendId,
+  //     'file': restler.file
+  //   }
+  // }).on('complete', function (data) {
+  //   console.log(data);
+  // });
+  
+  const config = {
+    method: 'post',
+    uri: 'https://chat.line.biz/api/v1/bots/' + body.token.lineOAID + '/messages/' + body.token.chatID + '/sendFile',
+    formData: data,
+    headers: {
+      Cookie: 'ses=' + body.token.cookietoken + ';' + 'XSRF-TOKEN=' + body.token.xsrftoken,
+      'X-XSRF-TOKEN': body.token.xsrftoken,
+      "Content-Type": "multipart/form-data"
+    }
+  };
+  request(config, (err, res, body) => {
+    if (!body.error) {
+      resp.jsonp({
+        status: 200
+      });
     } else {
       return new Error("Unable to send message:" + body.error);
     }
