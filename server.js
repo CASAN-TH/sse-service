@@ -218,7 +218,6 @@ app.post('/lineContactChat', async (req, resp) => {
       Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF- TOKEN=' + req.body.xsrftoken
     }
   };
-
   request(config, (err, res, body) => {
     if (!body.error) {
       let messages = (JSON.parse(body));
@@ -241,6 +240,28 @@ app.post('/lineContactChat', async (req, resp) => {
         lengthMessage++;
       })
       resp.jsonp(messages);
+
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+})
+
+app.post('/lineMarkAsRead', async (req, resp) => {
+  const config = {
+    method: 'put',
+    uri: "https://chat.line.biz/api/v1/bots/" + req.body.lineOAID + "/chats/" + req.body.chatID + "/markAsRead",
+    json: {
+      messageId: req.body.messageID
+    },
+    headers: {
+      Cookie: 'ses=' + req.body.cookietoken + ';' + 'XSRF-TOKEN=' + req.body.xsrftoken,
+      'X-XSRF-TOKEN': req.body.xsrftoken
+    }
+  };
+  request(config, (err, res, body) => {
+    if (!body.error) {
+      resp.jsonp(200);
     } else {
       return new Error("Unable to send message:" + body.error);
     }
